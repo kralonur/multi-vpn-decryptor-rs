@@ -1,0 +1,3 @@
+[workspace]
+members = ["decryptor-core"]
+resolver = "2"
