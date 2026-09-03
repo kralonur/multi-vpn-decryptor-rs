@@ -198,10 +198,12 @@ dependencies = [
  "cipher",
  "hex",
  "hex-literal",
+ "poly1305",
  "regex",
  "serde-wasm-bindgen",
  "serde_json",
  "sha2",
+ "subtle",
  "thiserror",
  "wasm-bindgen",
  "xxtea",
@@ -493,6 +495,12 @@ name = "slab"
 version = "0.4.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
+
+[[package]]
+name = "subtle"
+version = "2.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
 
 [[package]]
 name = "syn"
