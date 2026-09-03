@@ -2,14 +2,18 @@
 name = "decryptor-core"
 version = "0.1.0"
 edition = "2024"
+description = "Decrypt HTTP Injector, HTTP Custom, and SSH Custom VPN configurations"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 aes = { workspace = true }
-argon2 = { workspace = true }
+argon2 = { version = "0.6.0", default-features = false, features = ["alloc", "kdf"] }
 base64 = { workspace = true }
 cbc = { workspace = true }
-chacha20 = { workspace = true, features = ["legacy"] }
-chacha20poly1305 = { workspace = true }
+chacha20 = { version = "0.10.2", default-features = false, features = ["legacy"] }
+chacha20poly1305 = { version = "0.11.0", default-features = false, features = ["alloc"] }
 cipher = { workspace = true }
 hex = { workspace = true }
 hex-literal = { workspace = true }
