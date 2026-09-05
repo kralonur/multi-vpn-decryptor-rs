@@ -1,0 +1,27 @@
+{
+  "name": "multi-vpn-decryptor-web",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.3.4",
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "24",
+      "onFail": "download"
+    }
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "dev": "pnpm run build:wasm && vite",
+    "build": "pnpm run build:wasm && tsc --noEmit && vite build",
+    "build:wasm": "wasm-pack build ../decryptor-core --target web --release --out-dir ../web/src/wasm",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2",
+    "wasm-pack": "^0.15.0"
+  }
+}

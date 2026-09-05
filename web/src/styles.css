@@ -1,0 +1,253 @@
+:root {
+  color-scheme: light dark;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  color: #e7ecf5;
+  background: #0b1020;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at 15% 0%, rgb(59 130 246 / 22%), transparent 32rem),
+    #0b1020;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+select,
+input,
+textarea {
+  border-radius: 0.65rem;
+}
+
+button,
+select,
+input[type="file"],
+textarea {
+  border: 1px solid #34415e;
+}
+
+button,
+select,
+input[type="file"] {
+  min-height: 2.8rem;
+}
+
+.app-shell {
+  width: min(62rem, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 4rem 0 5rem;
+}
+
+.hero {
+  margin-bottom: 2rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.75rem;
+  color: #7dd3fc;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  max-width: 42rem;
+  margin-bottom: 0.8rem;
+  color: #f8fafc;
+  font-size: clamp(2.4rem, 7vw, 4.6rem);
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+
+h2 {
+  margin-bottom: 1.25rem;
+  color: #f8fafc;
+  font-size: 1.1rem;
+}
+
+.lede {
+  max-width: 38rem;
+  margin-bottom: 0;
+  color: #aebbd0;
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+
+.panel {
+  margin-top: 1.25rem;
+  padding: clamp(1.1rem, 4vw, 1.75rem);
+  border: 1px solid #26324a;
+  border-radius: 1rem;
+  background: rgb(18 27 48 / 88%);
+  box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 18%);
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 1rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: #afbdd4;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+select,
+input[type="file"],
+textarea {
+  width: 100%;
+  padding: 0.75rem 0.85rem;
+  color: #edf3ff;
+  background: #0e172b;
+  outline: none;
+}
+
+select:focus,
+input[type="file"]:focus,
+textarea:focus,
+button:focus-visible {
+  border-color: #7dd3fc;
+  box-shadow: 0 0 0 0.2rem rgb(125 211 252 / 15%);
+}
+
+textarea {
+  min-height: 11rem;
+  resize: vertical;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  line-height: 1.5;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.25rem 0 1.2rem;
+  color: #c4d0e3;
+  font-size: 0.9rem;
+}
+
+.toggle input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: #38bdf8;
+}
+
+button {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  color: #07111e;
+  border-color: #38bdf8;
+  background: #7dd3fc;
+  cursor: pointer;
+  font-weight: 800;
+  transition: transform 120ms ease, background 120ms ease;
+}
+
+button:hover:not(:disabled) {
+  background: #bae6fd;
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.status {
+  min-height: 1.5rem;
+  margin: 0.85rem 0 0;
+  color: #8fa4c1;
+  font-size: 0.9rem;
+}
+
+.status.error {
+  color: #fda4af;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.section-heading h2 {
+  margin-bottom: 0;
+}
+
+.secondary-button {
+  width: auto;
+  min-height: 2.3rem;
+  padding: 0.45rem 0.75rem;
+  color: #b9eaff;
+  border-color: #315578;
+  background: transparent;
+  font-size: 0.8rem;
+}
+
+.secondary-button:hover:not(:disabled) {
+  color: #07111e;
+  background: #7dd3fc;
+}
+
+pre {
+  min-height: 12rem;
+  max-height: 40rem;
+  margin: 1.25rem 0 0;
+  padding: 1rem;
+  overflow: auto;
+  border: 1px solid #26324a;
+  border-radius: 0.7rem;
+  background: #070b15;
+  color: #d5e4ff;
+  font: 0.84rem/1.6 "SFMono-Regular", Consolas, monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 42rem) {
+  .app-shell {
+    padding-top: 2.5rem;
+  }
+
+  .field-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .section-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .secondary-button {
+    width: 100%;
+  }
+}

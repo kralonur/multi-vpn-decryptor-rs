@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Decrypt VPN configuration files locally in your browser." />
+    <title>Multi VPN Decryptor</title>
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero" aria-labelledby="page-title">
+        <p class="eyebrow">Local-first configuration tooling</p>
+        <h1 id="page-title">Multi VPN Decryptor</h1>
+        <p class="lede">
+          Decode EHI, HTTP Custom, and SSH Custom configurations locally. Your
+          files never leave this browser.
+        </p>
+      </section>
+
+      <section class="panel" aria-labelledby="input-title">
+        <h2 id="input-title">Input</h2>
+        <div class="field-grid">
+          <label class="field">
+            <span>Format</span>
+            <select id="format">
+              <option value="ehi">HTTP Injector (.ehi)</option>
+              <option value="hc">HTTP Custom (.hc)</option>
+              <option value="ssc">SSH Custom (.ssc / ssc://)</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Configuration file</span>
+            <input id="file" type="file" accept=".ehi" />
+          </label>
+        </div>
+
+        <label class="field">
+          <span>Or paste configuration text</span>
+          <textarea id="text" rows="8" spellcheck="false" placeholder="Paste a configuration here"></textarea>
+        </label>
+
+        <label class="toggle" id="option-control">
+          <input id="option" type="checkbox" checked />
+          <span id="option-label">Redact secrets</span>
+        </label>
+
+        <button id="decrypt" type="button" disabled>Loading decryptor…</button>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="panel" aria-labelledby="output-title">
+        <div class="section-heading">
+          <h2 id="output-title">Output</h2>
+          <button id="copy" class="secondary-button" type="button" disabled>Copy JSON</button>
+        </div>
+        <pre id="output" tabindex="0"><code></code></pre>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
