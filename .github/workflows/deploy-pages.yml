@@ -36,6 +36,11 @@ jobs:
           cache: true
           cache-dependency-path: web/pnpm-lock.yaml
           package-json-file: web/package.json
+          install: false
+
+      - name: Install web dependencies
+        working-directory: web
+        run: pnpm install --frozen-lockfile
 
       - name: Build web app
         working-directory: web
