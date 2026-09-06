@@ -15,6 +15,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
+  overflow-x: hidden;
   background:
     radial-gradient(circle at 15% 0%, rgb(59 130 246 / 22%), transparent 32rem),
     #0b1020;
@@ -57,6 +58,37 @@ input[type="file"] {
   margin-bottom: 2rem;
 }
 
+.hero-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.local-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid #28516d;
+  border-radius: 999px;
+  color: #b9eaff;
+  background: rgb(14 48 72 / 55%);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.badge-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: #67e8f9;
+  box-shadow: 0 0 0 0.2rem rgb(103 232 249 / 12%);
+}
+
 .eyebrow {
   margin: 0 0 0.75rem;
   color: #7dd3fc;
@@ -96,12 +128,50 @@ h2 {
 }
 
 .panel {
+  position: relative;
   margin-top: 1.25rem;
   padding: clamp(1.1rem, 4vw, 1.75rem);
+  overflow: hidden;
   border: 1px solid #26324a;
   border-radius: 1rem;
   background: rgb(18 27 48 / 88%);
   box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 18%);
+}
+
+.panel::before {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: linear-gradient(90deg, #38bdf8, transparent 72%);
+  content: "";
+  opacity: 0.8;
+}
+
+.panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.panel-heading h2,
+.section-heading h2 {
+  margin-bottom: 0;
+}
+
+.panel-kicker {
+  margin: 0 0 0.35rem;
+  color: #5f7898;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.panel-caption {
+  padding-top: 0.15rem;
+  color: #7187a4;
+  font-size: 0.78rem;
 }
 
 .field-grid {
@@ -120,7 +190,6 @@ h2 {
 }
 
 select,
-input[type="file"],
 textarea {
   width: 100%;
   padding: 0.75rem 0.85rem;
@@ -129,8 +198,60 @@ textarea {
   outline: none;
 }
 
+.file-picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  min-height: 2.8rem;
+  overflow: hidden;
+  border: 1px solid #34415e;
+  border-radius: 0.65rem;
+  background: #0e172b;
+}
+
+.file-picker:focus-within {
+  border-color: #7dd3fc;
+  box-shadow: 0 0 0 0.2rem rgb(125 211 252 / 15%);
+}
+
+.file-input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-button {
+  flex: 0 0 auto;
+  margin-left: 0.42rem;
+  padding: 0.38rem 0.65rem;
+  border: 1px solid #315578;
+  border-radius: 0.45rem;
+  color: #c7eaff;
+  background: #152640;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.file-name {
+  min-width: 0;
+  padding: 0 0.75rem;
+  overflow: hidden;
+  color: #8fa4c1;
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 select:focus,
-input[type="file"]:focus,
 textarea:focus,
 button:focus-visible {
   border-color: #7dd3fc;
@@ -165,13 +286,15 @@ button {
   color: #07111e;
   border-color: #38bdf8;
   background: #7dd3fc;
+  box-shadow: 0 0.6rem 1.5rem rgb(56 189 248 / 12%);
   cursor: pointer;
   font-weight: 800;
-  transition: transform 120ms ease, background 120ms ease;
+  transition: transform 120ms ease, background 120ms ease, box-shadow 120ms ease;
 }
 
 button:hover:not(:disabled) {
   background: #bae6fd;
+  box-shadow: 0 0.8rem 1.8rem rgb(56 189 248 / 20%);
   transform: translateY(-1px);
 }
 
@@ -193,13 +316,9 @@ button:disabled {
 
 .section-heading {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-}
-
-.section-heading h2 {
-  margin-bottom: 0;
 }
 
 .secondary-button {
@@ -232,9 +351,29 @@ pre {
   overflow-wrap: anywhere;
 }
 
-@media (max-width: 42rem) {
+pre.empty {
+  display: grid;
+  place-items: center;
+  color: #536986;
+}
+
+.output-placeholder {
+  text-align: center;
+}
+
+@media (max-width: 30rem) {
   .app-shell {
     padding-top: 2.5rem;
+  }
+
+  .hero-topline {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .panel-heading {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
   .field-grid {

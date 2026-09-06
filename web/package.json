@@ -15,12 +15,17 @@
   },
   "scripts": {
     "dev": "pnpm run build:wasm && vite",
-    "build": "pnpm run build:wasm && tsc --noEmit && vite build",
+    "build": "pnpm run build:wasm && pnpm run check && vite build",
     "build:wasm": "wasm-pack build ../decryptor-core --target web --release --out-dir ../web/src/wasm",
+    "check": "svelte-check --tsconfig ./tsconfig.json --tsgo",
     "preview": "vite preview"
   },
   "devDependencies": {
-    "typescript": "^7.0.2",
+    "@sveltejs/vite-plugin-svelte": "^7.3.0",
+    "@typescript/native": "npm:typescript@7",
+    "svelte": "^5.57.0",
+    "svelte-check": "^4.7.6",
+    "typescript": "^6.0.3",
     "vite": "^8.2.2",
     "wasm-pack": "^0.15.0"
   }
