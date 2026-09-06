@@ -1,7 +1,13 @@
 # Web UI
 
-The browser UI is a TypeScript app built with Vite. Decryption runs locally in
-WebAssembly; configuration files are not uploaded.
+The browser UI is a declarative Svelte app built with Vite. Decryption runs
+locally in WebAssembly; configuration files are not uploaded.
+
+## Hosted app
+
+Run the latest deployed app directly in your browser:
+
+<https://kralonur.github.io/multi-vpn-decryptor-rs/>
 
 ## Development
 
@@ -15,6 +21,8 @@ pnpm dev
 `pnpm dev` builds the Rust WebAssembly package through the local
 `wasm-pack` dependency before starting Vite. No separate build file is
 required.
+
+Svelte diagnostics run as part of `pnpm build` through `svelte-check`.
 
 ## Production build
 

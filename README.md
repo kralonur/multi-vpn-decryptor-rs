@@ -11,7 +11,11 @@ Supported formats:
 
 ## Web app
 
-Requirements: Rust, the `wasm32-unknown-unknown` target, and pnpm.
+You can run the hosted app directly in your browser without installing
+anything: <https://kralonur.github.io/multi-vpn-decryptor-rs/>.
+
+For local development, requirements are Rust, the `wasm32-unknown-unknown`
+target, and pnpm.
 
 ```console
 rustup target add wasm32-unknown-unknown
