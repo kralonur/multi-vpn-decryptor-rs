@@ -31,9 +31,11 @@ jobs:
       - name: Set up pnpm and Node.js
         uses: pnpm/setup@v2
         with:
-          working-directory: web
+          version: 12.3.4
+          runtime: node@24
           cache: true
-          require-lockfile: true
+          cache-dependency-path: web/pnpm-lock.yaml
+          package-json-file: web/package.json
 
       - name: Build web app
         working-directory: web
