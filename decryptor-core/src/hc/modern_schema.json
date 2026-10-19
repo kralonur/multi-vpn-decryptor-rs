@@ -1,0 +1,29 @@
+{
+  "config": {
+    "fields": {"s":"schemaVersion","t":"createdAtMillis","c":"sections","g":"protection","v":"connectionSettings","u":"updateUrl","r":"refreshIntervalSec","m":"updateMode","l":"legacyCreatorLabel","i":"index"},
+    "children": {"g":"protection","v":"connection_settings","i":"index"}
+  },
+  "profile": {
+    "fields": {"a":"name","b":"protocolType","c":"host","d":"port","e":"username","f":"password","g":"sni","h":"configJson","i":"sortOrder","j":"createdAt","k":"creatorProfileId"},
+    "json_fields": ["h"]
+  },
+  "protection": {
+    "fields": {"a":"accessMode","b":"remoteProxyUnlocked","c":"expiryEnabled","d":"expiryAtMillis","e":"expiryRequiresAutomaticTime","f":"hwidLockEnabled","g":"hwids","h":"loginHwidEnabled","i":"loginHwidScheme","j":"loginHwidAuthorizationRequired","k":"legacyHwidEnabled","l":"mobileDataOnly","m":"blockRoot","n":"legacyExtraProtectionEnabled","o":"providerLockEnabled","p":"providerCodes","q":"providerMatchOperatorName","r":"countryLockEnabled","s":"countryCodes","t":"blockApplicationsEnabled","u":"blockedApplications","v":"note","w":"sshBannerAsNote","x":"tunnelBanner"}
+  },
+  "connection_settings": {
+    "fields": {"a":"payloadBuffer","b":"loadBalancing","c":"socksEngine","d":"vpnBehavior","e":"connectionCheck"},
+    "children": {"a":"payload_buffer","b":"load_balancing","c":"socks_engine","d":"vpn_behavior","e":"connection_check"}
+  },
+  "payload_buffer": {"fields":{"a":"clientBytes","b":"remoteBytes"}},
+  "load_balancing": {"fields":{"a":"strategy"}},
+  "socks_engine": {"fields":{"a":"engine","b":"udpEnabled","c":"udpgwPort"}},
+  "vpn_behavior": {"fields":{"a":"dns","b":"dnsFallback","c":"ipv6Dns","d":"ipv6DnsFallback","e":"mtu","f":"ipv6Enabled","g":"autoRestartEnabled","h":"wakeLockEnabled","i":"appRoutingMode","j":"appRoutingPackages"}},
+  "connection_check": {"fields":{"a":"url","b":"intervalSeconds","c":"timeoutSeconds","d":"maxRetry","e":"autoStop"}},
+  "index": {
+    "fields":{"s":"schemaVersion","rpu":"remoteProxyUnlocked","sg":"single","pf":"profiles"},
+    "children":{"sg":"single_index","pf":"profile_index[]"}
+  },
+  "single_index": {"values":"section_meta"},
+  "section_meta": {"fields":{"su":"serverUnlockAvailable","st":"sshTransport","ak":"v2rayAuthKind"}},
+  "profile_index": {"fields":{"r":"ref","n":"name","t":"protocolType","su":"serverUnlockAvailable","st":"sshTransport","ak":"v2rayAuthKind"}}
+}
