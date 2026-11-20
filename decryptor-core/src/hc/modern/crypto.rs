@@ -1,4 +1,4 @@
-//! Build-899 native HMAC key derivation and authenticated encryption.
+//! Build-899 (v4) and build-934 (v5) native HMAC key derivation and AEAD.
 
 use super::{HcError, TAG_BYTES};
 use chacha20poly1305::{
@@ -11,11 +11,18 @@ use sha2::{Digest, Sha256, block_api::compress256};
 const CERTIFICATE_DIGEST: [u8; 32] =
     hex!("95dd433d7e4a0be02d55cc62553edcfc8f077fe780be5a7da7f861c2558dc181");
 // SHA-256 states after the native v4 HMAC's 64-byte ipad/opad blocks.
-const IPAD_STATE: [u32; 8] = [
+const V4_IPAD_STATE: [u32; 8] = [
     0x82515a9a, 0xf6ec05fc, 0xf650b6cd, 0x523f8ce6, 0xedf419ec, 0x1d6d6573, 0x66ff1b89, 0xf40a0181,
 ];
-const OPAD_STATE: [u32; 8] = [
+const V4_OPAD_STATE: [u32; 8] = [
     0x82185b01, 0x35cb48be, 0xdb6c3846, 0xbd714ec5, 0x627728af, 0xdbaae4db, 0x463fbf8d, 0x88a24381,
+];
+// SHA-256 states after the native v5 HMAC's 64-byte ipad/opad blocks.
+const V5_IPAD_STATE: [u32; 8] = [
+    0xaabd3a1e, 0x3d63a211, 0xe615b378, 0x46a07517, 0x11f5cab4, 0xa7aef829, 0x83c7543b, 0x2d971ab7,
+];
+const V5_OPAD_STATE: [u32; 8] = [
+    0x423fcb79, 0xc4dd3dc8, 0x57d814ac, 0x1660ed59, 0xdbb328b7, 0xcc389261, 0x06f1803e, 0xe3130c6b,
 ];
 
 fn finish_hmac_state(mut state: [u32; 8], data: &[u8]) -> [u8; 32] {
@@ -49,16 +56,48 @@ pub(super) fn hmac(key: &[u8], data: &[u8]) -> [u8; 32] {
     outer.finalize().into()
 }
 
-pub(super) fn derive_key(prefix: &[u8], salt: &[u8], info: &[u8]) -> [u8; 32] {
-    let mut material = vec![0xe9];
+fn derive_native_key(
+    domain: u8,
+    ipad: [u32; 8],
+    opad: [u32; 8],
+    prefix: &[u8],
+    salt: &[u8],
+    info: &[u8],
+) -> [u8; 32] {
+    let mut material = Vec::with_capacity(1 + CERTIFICATE_DIGEST.len() + prefix.len());
+    material.push(domain);
     material.extend_from_slice(&CERTIFICATE_DIGEST);
     material.extend_from_slice(prefix);
-    let inner = finish_hmac_state(IPAD_STATE, &material);
-    let ikm = finish_hmac_state(OPAD_STATE, &inner);
-    let prk = hmac(salt, &ikm);
-    let mut expand = info.to_vec();
+    let inner = finish_hmac_state(ipad, &material);
+    let ikm = finish_hmac_state(opad, &inner);
+    hkdf_sha256_expand_one(salt, &ikm, info)
+}
+
+fn hkdf_sha256_expand_one(salt: &[u8], ikm: &[u8], info: &[u8]) -> [u8; 32] {
+    let prk = hmac(salt, ikm);
+    let mut expand = Vec::with_capacity(info.len() + 1);
+    expand.extend_from_slice(info);
     expand.push(1);
     hmac(&prk, &expand)
+}
+
+pub(super) fn derive_key(prefix: &[u8], salt: &[u8], info: &[u8]) -> [u8; 32] {
+    derive_native_key(0xe9, V4_IPAD_STATE, V4_OPAD_STATE, prefix, salt, info)
+}
+
+pub(super) fn derive_v5_key(aad: &[u8], salt: &[u8]) -> [u8; 32] {
+    derive_native_key(
+        0xf1,
+        V5_IPAD_STATE,
+        V5_OPAD_STATE,
+        aad,
+        salt,
+        b"hc-config-content-v12",
+    )
+}
+
+pub(super) fn derive_v5_part_key(session_key: &[u8; 32], section_aad: &[u8]) -> [u8; 32] {
+    hkdf_sha256_expand_one(b"hc-config-part-v12", session_key, section_aad)
 }
 
 pub(super) fn open(

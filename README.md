@@ -9,10 +9,10 @@ your browser.
 | --- | --- | --- |
 | HTTP Injector (`.ehi`) | **6.5.0** (APK analysis) | Layered containers, nested locks, and supported encrypted fields. |
 | HTTP Custom (`.hc`), legacy | **7.10.12 - Patch 2**, build **810** (verified) | Legacy outer container and 32-slot configurations; nested credential/protocol semantics remain best-effort. |
-| HTTP Custom (`.hc`), modern | **7.11.28 Patch 1**, build **899** (verified) | Container **10**, **n11**, **unpassworded**: manifest, sections, runtime profiles, and separately encrypted custom payloads. |
+| HTTP Custom (`.hc`), modern | **7.11.28 Patch 1** (build **899**) & **8.0.22 - Patch 2** (build **934**) | Container **10** (`n11`) and Container **12** (`n15`), **unpassworded**: manifest, sections, runtime profiles, and separately encrypted custom payloads. |
 | SSH Custom (`.ssc`, `ssc://`) | App version not pinned | APK-derived compact format, nested lock, and encrypted profile fields. |
 
-**Latest verified HTTP Custom version: 7.11.28 Patch 1 (899).** These are
+**Latest verified HTTP Custom version: 8.0.22 - Patch 2 (934).** These are
 specific compatibility targets, not a guarantee that every earlier or later
 app version uses the same format. Modern password/access-bound schemes are
 explicitly rejected. Legacy and modern HC files are detected automatically.

@@ -1,5 +1,5 @@
 //! HTTP Custom format detection and shared native/WASM entry points.
-//! Legacy build-810 and authenticated build-899 n11 decoding stay separate.
+//! Legacy build-810 and authenticated modern (n11/n15) decoding stay separate.
 
 mod legacy;
 mod modern;

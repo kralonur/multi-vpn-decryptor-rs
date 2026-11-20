@@ -1,11 +1,11 @@
-//! Authenticated build-899 envelopes and unpassworded n11 configuration sections.
+//! Authenticated HCX4 envelopes and unpassworded n11 (build 899) / n15 (build 934) sections.
 
 mod crypto;
 mod profile;
 mod view;
 
 use super::HcError;
-use crypto::{derive_key, open};
+use crypto::{derive_key, derive_v5_key, derive_v5_part_key, open};
 use serde_json::{Map, Value, json};
 
 const PACKAGE: &str = "xyz.easypro.httpcustom";
@@ -80,12 +80,39 @@ pub(super) fn decode(envelope: &Value) -> Result<Value, HcError> {
         "protected_payloads": payloads,
         "decoded": {"config": decoded_config, "profiles": decoded_profiles},
         "protections": protections,
-        "metadata": {"container_version": 10, "key_scheme": "n11", "reader_version": session.reader},
+        "metadata": {
+            "container_version": session.scheme.container_version(),
+            "key_scheme": session.scheme.key_scheme(),
+            "reader_version": session.reader,
+        },
     }))
 }
 
-/// One n11 key and its authenticated context, shared by every section/layer.
+#[derive(Clone, Copy)]
+enum Scheme {
+    N11,
+    N15,
+}
+
+impl Scheme {
+    fn container_version(self) -> u64 {
+        match self {
+            Self::N11 => 10,
+            Self::N15 => 12,
+        }
+    }
+
+    fn key_scheme(self) -> &'static str {
+        match self {
+            Self::N11 => "n11",
+            Self::N15 => "n15",
+        }
+    }
+}
+
+/// One session key and its authenticated context for n11 (shared) or n15 (per-section derived).
 struct Session {
+    scheme: Scheme,
     key: [u8; 32],
     aad: Vec<u8>,
     reader: Option<u64>,
@@ -93,10 +120,16 @@ struct Session {
 
 impl Session {
     fn from_envelope(envelope: &Value) -> Result<Self, HcError> {
-        if envelope.get("b").and_then(Value::as_u64) != Some(10)
-            || string(envelope, "c")? != "s1"
-            || string(envelope, "d")? != "h1"
-            || string(envelope, "e")? != "n11"
+        let scheme = match (
+            envelope.get("b").and_then(Value::as_u64),
+            string(envelope, "e")?,
+        ) {
+            (Some(10), "n11") => Scheme::N11,
+            (Some(12), "n15") => Scheme::N15,
+            _ => return Err(HcError::UnsupportedModernProtection),
+        };
+        if !matches!(string(envelope, "c")?, "s1" | "XCHACHA20P1305")
+            || !matches!(string(envelope, "d")?, "h1" | "NATIVE-HKDF-SHA256")
             || envelope.get("h").and_then(Value::as_u64) != Some(0)
             || envelope.get("o").is_some()
             || envelope.get("p").is_some()
@@ -120,21 +153,34 @@ impl Session {
                     .ok_or(HcError::InvalidModernLayout)
             })
             .transpose()?;
+        if matches!(scheme, Scheme::N15) && reader.is_none() {
+            return Err(HcError::InvalidModernLayout);
+        }
         let suffix = reader.map(|n| format!("|{n}")).unwrap_or_default();
-        let aad =
-            format!("HCCFG|10|XCHACHA20P1305|NATIVE-HKDF-SHA256|n11|{PACKAGE}|1|{parts}|0{suffix}");
+        let aad = format!(
+            "HCCFG|{}|XCHACHA20P1305|NATIVE-HKDF-SHA256|{}|{PACKAGE}|1|{parts}|0{suffix}",
+            scheme.container_version(),
+            scheme.key_scheme()
+        );
         let salt = unhex(envelope, "g")?;
         if salt.len() != 32 {
             return Err(HcError::InvalidModernLayout);
         }
-        let mut prefix = format!("HCCFG\0{PACKAGE}\x001\0{parts}\0").into_bytes();
-        if let Some(reader) = reader {
-            prefix.extend_from_slice(format!("{reader}\0").as_bytes());
-        }
-        prefix.extend_from_slice(&salt);
-        let info = format!("app-config|n11|{PACKAGE}|1|{parts}{suffix}");
+        let key = match scheme {
+            Scheme::N11 => {
+                let mut prefix = format!("HCCFG\0{PACKAGE}\x001\0{parts}\0").into_bytes();
+                if let Some(reader) = reader {
+                    prefix.extend_from_slice(format!("{reader}\0").as_bytes());
+                }
+                prefix.extend_from_slice(&salt);
+                let info = format!("app-config|n11|{PACKAGE}|1|{parts}{suffix}");
+                derive_key(&prefix, &salt, info.as_bytes())
+            }
+            Scheme::N15 => derive_v5_key(aad.as_bytes(), &salt),
+        };
         Ok(Self {
-            key: derive_key(&prefix, &salt, info.as_bytes()),
+            scheme,
+            key,
             aad: aad.into_bytes(),
             reader,
         })
@@ -181,13 +227,17 @@ impl Session {
             .map_err(|_| HcError::InvalidModernLayout)
     }
 
+    fn section_key(&self, aad: &[u8]) -> [u8; 32] {
+        match self.scheme {
+            Scheme::N11 => self.key,
+            Scheme::N15 => derive_v5_part_key(&self.key, aad),
+        }
+    }
+
     fn open(&self, nonce: &[u8], ciphertext: &[u8], context: &str) -> Result<Vec<u8>, HcError> {
-        open(
-            &self.key,
-            nonce,
-            ciphertext,
-            &section_aad(&self.aad, context),
-        )
+        let aad = section_aad(&self.aad, context);
+        let key = self.section_key(&aad);
+        open(&key, nonce, ciphertext, &aad)
     }
 }
 
